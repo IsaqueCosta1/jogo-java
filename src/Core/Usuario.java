@@ -1,8 +1,10 @@
 // =============================================
 // Classe Usuario
 // Representa o usuário do sistema de aprendizado
-// Armazena nome e estatísticas da sessão
+// Armazena nome e gerencia estatísticas da sessão
+// Mantém o estado do usuário durante a execução
 // =============================================
+
 package Core;
 
 public class Usuario {

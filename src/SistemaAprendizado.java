@@ -1,9 +1,10 @@
 // =============================================
-// Como reescrever este código: Tutorial passo a passo
-// Este arquivo mostra como criar um sistema interativo de aprendizado em Java
-// Siga os comentários para entender cada etapa e como você pode adaptar para seu projeto
+// Classe SistemaAprendizado
+// Gerencia o fluxo principal do sistema
+// Controla menus, navegação e interação com usuário
+// Coordena exercícios e exibe estatísticas
 // =============================================
-// 1. Importe as classes necessárias para organizar seu projeto
+
 import Core.ExercicioTopico;
 import Core.Usuario;
 import Exceptions.NavegacaoException;
@@ -13,136 +14,136 @@ import enums.TipoQuestao;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-// 2. Crie a classe principal do sistema
 public class SistemaAprendizado {
-    // 3. Defina constantes para facilitar manutenção e configuração
-    public static final int QUESTOES_POR_TOPICO = 15; // Altere para mudar o número de questões
-    public static final String VERSAO_SISTEMA = "1.0.0"; // Controle de versão
+    public static final int QUESTOES_POR_TOPICO = 15;
+    public static final String VERSAO_SISTEMA = "1.0.0";
 
-    // 4. Declare os atributos principais do sistema
-    private Usuario usuario; // Armazena dados do usuário
-    private boolean executando; // Controla o loop principal
-    private Scanner scanner; // Permite ler dados do terminal
+    private Usuario usuario;
+    private boolean executando;
+    private Scanner scanner;
 
-    // 5. Construa o sistema inicializando variáveis
     public SistemaAprendizado() {
-        this.executando = true; // O sistema começa rodando
-        this.scanner = new Scanner(System.in); // Scanner para entrada de dados
+        this.executando = true;
+        this.scanner = new Scanner(System.in);
     }
 
-    // 6. Método principal: inicia a sessão do usuário
-    // Aqui você pode personalizar o fluxo inicial do seu sistema
-    public void iniciarSessao() {
-        exibirCabecalho(); // Exibe informações iniciais
 
-        // Solicite o nome do usuário e valide a entrada
+    public void iniciarSessao() {
+        exibirCabecalho();
+
+        // Solicite o nome do usuário e valida a entrada
         System.out.print("Digite seu nome para iniciar: ");
         String nome = scanner.nextLine().trim();
-        while (nome.isEmpty()) { // Validação simples para evitar nome vazio
+        while (nome.isEmpty()) {
             System.out.print("Nome não pode estar vazio. Digite seu nome: ");
             nome = scanner.nextLine().trim();
         }
 
-        // Crie o usuário e inicialize estatísticas
+        // Crie o usuário e inicializa estatísticas
         usuario = new Usuario(nome);
         usuario.getEstatisticas().iniciar();
-        System.out.println("\n🎉 Bem-vindo(a), " + nome + "! Vamos aprender Java juntos!");
+        System.out.println("\n🎉 Bem-vindo(a), " + nome + "! Vamos aprender Programação Orientada a Objetos juntos!");
 
-        // 7. Loop principal: mantém o sistema rodando até o usuário sair
-        // Use um loop while para criar sistemas interativos
+        // Loop principal: mantém o sistema rodando até o usuário sair
         while (executando) {
             try {
-                mostrarMenuPrincipal(); // Exibe o menu principal
+                mostrarMenuPrincipal();
             } catch (Exception e) {
-                gerenciarExcecoes(e); // Trata exceções de forma amigável
+                gerenciarExcecoes(e);
             }
         }
 
-        // Finalize a sessão e exiba mensagem de despedida
+        // Finaliza a sessão e exibe mensagem
         usuario.getEstatisticas().finalizar();
         System.out.println("\n👋 Obrigado por usar o Sistema de Aprendizado, " + usuario.getNome() + "!");
         System.out.println("Até a próxima sessão de estudos!");
-        scanner.close(); // Sempre feche recursos ao final
+        scanner.close();
     }
 
-    // 8. Menu principal: oferece opções ao usuário
-    // Use switch para facilitar manutenção e leitura
+    // Menu principal
     public void mostrarMenuPrincipal() throws NavegacaoException {
+        if (!usuario.getEstatisticas().isSessaoAtiva()) {
+            usuario.getEstatisticas().iniciar();
+        }
         System.out.println("\n" + "=".repeat(60));
         System.out.println("  SISTEMA DE APRENDIZADO DE PROGRAMAÇÃO v" + VERSAO_SISTEMA);
-        System.out.println("  Usuário: " + usuario.getNome() + " | Sessão: " + usuario.getEstatisticas().calcularTempoSessao() + "s");
+        System.out.println("  Usuário: " + usuario.getNome() + " | Tempo: " + usuario.getEstatisticas().getTempoSessaoFormatado());
+        System.out.println(usuario.getEstatisticas().getEstatisticasResumo());
         System.out.println("=".repeat(60));
         System.out.println("Olá, " + usuario.getNome() + "! O que deseja fazer hoje?");
         System.out.println();
         System.out.println("1. 📚 Aprender Java (POO)");
         System.out.println("2. 📊 Consultar Estatísticas");
-        System.out.println("3. 🚪 Sair do Sistema");
+        System.out.println("3. 🔄 Reiniciar Progresso");
+        System.out.println("4. 🚪 Sair do Sistema");
         System.out.println();
-        System.out.print("Escolha uma opção (1-3): ");
+        System.out.print("Escolha uma opção (1-4): ");
 
         try {
             int opcao = scanner.nextInt();
-            scanner.nextLine(); // Limpar buffer
-            // Use switch para tratar cada opção do menu
+            scanner.nextLine();
             switch (opcao) {
                 case 1:
-                    mostrarMenuJava(); // Menu de tópicos
+                    mostrarMenuJava();
                     break;
                 case 2:
-                    mostrarEstatisticas(); // Estatísticas do usuário
+                    mostrarEstatisticas();
                     break;
                 case 3:
-                    executando = false; // Encerra o sistema
+                    resetarProgresso();
+                    break;
+                case 4:
+                    executando = false;
                     break;
                 default:
-                    System.out.println("❌ Opção inválida! Escolha entre 1-3.");
+                    System.out.println("❌ Opção inválida! Escolha entre 1-4.");
             }
         } catch (InputMismatchException e) {
             System.out.println("❌ Digite apenas números!");
-            scanner.nextLine(); // Limpar buffer inválido
+            scanner.nextLine();
         }
     }
 
-    // 9. Menu de tópicos: permite escolher o conteúdo para estudar
-    // Adicione ou remova tópicos conforme seu projeto
+    // Menu de tópicos
     public void mostrarMenuJava() throws NavegacaoException {
         System.out.println("\n" + "=".repeat(50));
         System.out.println("        MÓDULO: APRENDER JAVA (POO)");
         System.out.println("=".repeat(50));
         System.out.println("Escolha o tópico que deseja estudar:");
         System.out.println();
-        System.out.println("1. 🔒 Encapsulamento");
-        System.out.println("2. 🧬 Herança");
-        System.out.println("3. 🔌 Interface");
-        System.out.println("4. 🎭 Polimorfismo");
-        System.out.println("5. 🎨 Abstração");
+        System.out.println("1. 📚 Encapsulamento");
+        System.out.println("2. 📚 Herança");
+        System.out.println("3. 📚 Interface");
+        System.out.println("4. 📚 Polimorfismo");
+        System.out.println("5. 📚 Abstração");
         System.out.println("6. ↩️  Voltar ao Menu Principal");
         System.out.println();
         System.out.print("Escolha uma opção (1-6): ");
 
         try {
             int opcao = scanner.nextInt();
-            scanner.nextLine(); // Limpar buffer
-            // Use array para facilitar expansão de tópicos
+            scanner.nextLine();
             String[] topicos = {"", "encapsulamento", "herança", "interface", "polimorfismo", "abstração"};
             if (opcao >= 1 && opcao <= 5) {
-                iniciarExercicioTopico(topicos[opcao]); // Inicia exercícios
+                iniciarExercicioTopico(topicos[opcao]);
             } else if (opcao == 6) {
-                return; // Volta ao menu principal
+                return;
             } else {
                 System.out.println("❌ Opção inválida! Escolha entre 1-6.");
                 mostrarMenuJava();
             }
         } catch (InputMismatchException e) {
             System.out.println("❌ Digite apenas números!");
-            scanner.nextLine(); // Limpar buffer inválido
+            scanner.nextLine();
             mostrarMenuJava();
         }
     }
 
-    // 10. Inicia exercícios do tópico escolhido
-    // Aqui você pode personalizar o fluxo de perguntas e respostas
+    // Inicia exercícios do tópico escolhido
     private void iniciarExercicioTopico(String topico) {
+        if (!usuario.getEstatisticas().isSessaoAtiva()) {
+            usuario.getEstatisticas().iniciar();
+        }
         try {
             usuario.getEstatisticas().adicionarTopicoEstudado(topico); // Marca o tópico
             ExercicioTopico exercicio = new ExercicioTopico(topico, usuario.getEstatisticas());
@@ -157,8 +158,7 @@ public class SistemaAprendizado {
         }
     }
 
-    // 11. Permite escolher como as questões serão organizadas
-    // Você pode adicionar outros modos de ordenação se quiser
+    // Permite escolher como as questões serão organizadas
     private String escolherModoOrdenacao() {
         System.out.println("\n📋 Como deseja organizar as questões?");
         System.out.println("1. 🔀 Embaralhadas (ordem aleatória)");
@@ -183,8 +183,7 @@ public class SistemaAprendizado {
         }
     }
 
-    // 12. Executa o fluxo de perguntas e respostas do exercício
-    // Use comandos especiais para facilitar navegação do usuário
+    // Executa o fluxo de perguntas e respostas do exercício
     private void executarExercicios(ExercicioTopico exercicio) throws NavegacaoException {
         System.out.println("\n🎯 Iniciando exercícios de " + exercicio.getTituloTopico().toUpperCase() + "!");
         System.out.println("Total de questões: " + QUESTOES_POR_TOPICO);
@@ -212,6 +211,7 @@ public class SistemaAprendizado {
                 System.out.println("   'P' ou 'PULAR' - Pular questão atual");
             }
             System.out.println("   'M' ou 'MENU' - Voltar ao menu");
+            System.out.println("\nProgresso da sessão: " + usuario.getEstatisticas().getEstatisticasResumo());
             System.out.print("\nSua escolha: ");
 
             String entrada = scanner.nextLine().trim().toUpperCase();
@@ -261,8 +261,7 @@ public class SistemaAprendizado {
         scanner.nextLine();
     }
 
-    // 13. Exibe estatísticas do usuário
-    // Mostre progresso geral e dicas visuais
+    // Exibe estatísticas do usuário
     private void mostrarEstatisticas() {
         System.out.println(usuario.getEstatisticas().getResumo());
 
@@ -285,21 +284,18 @@ public class SistemaAprendizado {
         scanner.nextLine();
     }
 
-    // 14. Exibe cabeçalho inicial do sistema
-    // Personalize para seu projeto
+    // Exibe cabeçalho inicial do sistema
     private void exibirCabecalho() {
         System.out.println("\n" + "=".repeat(70));
         System.out.println("            🎓 SISTEMA DE APRENDIZADO DE PROGRAMAÇÃO 🎓");
-        System.out.println("                     Java - Programação Orientada a Objetos");
-        System.out.println("                           Versão " + VERSAO_SISTEMA);
+        System.out.println("               Java - Programação Orientada a Objetos");
+        System.out.println("                      Versão " + VERSAO_SISTEMA);
         System.out.println("=".repeat(70));
         System.out.println("📚 Aprenda os conceitos fundamentais de POO de forma interativa!");
         System.out.println("🎯 Tópicos: Encapsulamento | Herança | Interface | Polimorfismo | Abstração");
         System.out.println("=".repeat(70));
     }
 
-    // 15. Gerencie exceções de forma amigável
-    // Sempre trate erros para evitar travamentos
     public void gerenciarExcecoes(Exception e) {
         if (e instanceof NavegacaoException) {
             System.out.println("❌ Erro de navegação: " + e.getMessage());
@@ -307,9 +303,19 @@ public class SistemaAprendizado {
             System.out.println("❌ Erro na questão: " + e.getMessage());
         } else {
             System.out.println("❌ Erro inesperado: " + e.getMessage());
-            e.printStackTrace();
         }
         System.out.print("Pressione ENTER para continuar...");
+        scanner.nextLine();
+    }
+
+    private void resetarProgresso() {
+        System.out.print("\n⚠️ Tem certeza que deseja reiniciar todo o progresso? (S/N): ");
+        String confirmacao = scanner.nextLine().trim().toUpperCase();
+        if (confirmacao.equals("S")) {
+            usuario.getEstatisticas().resetarEstatisticas();
+            System.out.println("\n✅ Progresso reiniciado com sucesso!");
+        }
+        System.out.print("\nPressione ENTER para continuar...");
         scanner.nextLine();
     }
 }

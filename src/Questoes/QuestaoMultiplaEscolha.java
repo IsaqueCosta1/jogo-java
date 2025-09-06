@@ -1,3 +1,10 @@
+// =============================================
+// Classe QuestaoMultiplaEscolha
+// Implementa questões de múltipla escolha
+// Gerencia alternativas e verifica resposta correta
+// Formato tradicional com opções A, B, C, D
+// =============================================
+
 package Questoes;
 
 import enums.NivelDificuldade;
@@ -34,11 +41,6 @@ public class QuestaoMultiplaEscolha extends Questao {
         }
         sb.append("\n").append("-".repeat(60));
         return sb.toString();
-    }
-
-    @Override
-    public String[] getAlternativas() {
-        return alternativas.clone();
     }
 
     @Override

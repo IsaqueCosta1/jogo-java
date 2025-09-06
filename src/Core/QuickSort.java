@@ -1,3 +1,10 @@
+// =============================================
+// Classe QuickSort
+// Implementa algoritmo de ordenação para questões
+// Ordena questões por nível de dificuldade
+// Permite ordenação crescente, decrescente e aleatória
+// =============================================
+
 package Core;
 
 import Questoes.Questao;

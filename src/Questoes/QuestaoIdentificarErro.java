@@ -1,3 +1,10 @@
+// =============================================
+// Classe QuestaoIdentificarErro
+// Implementa questões do tipo identificação de erro
+// Apresenta código com erro e alternativas de justificativa
+// Avalia a capacidade de identificar problemas no código
+// =============================================
+
 package Questoes;
 
 import enums.NivelDificuldade;
@@ -18,7 +25,7 @@ public class QuestaoIdentificarErro extends Questao {
 
     @Override
     public boolean verificarResposta(String resposta) {
-        return resposta != null && resposta.trim().equalsIgnoreCase(justificativaCorreta.trim());
+        return resposta != null && resposta.trim().equalsIgnoreCase(getJustificativaCorreta().trim());
     }
 
     @Override
@@ -42,21 +49,13 @@ public class QuestaoIdentificarErro extends Questao {
         return sb.toString();
     }
 
-    public String getCodigoComErro() {
-        return codigoComErro;
-    }
-
     public String getJustificativaCorreta() {
-        return justificativaCorreta;
-    }
-
-    @Override
-    public String[] getAlternativas() {
-        return alternativasErro.clone();
+        return this.justificativaCorreta;
     }
 
     @Override
     public String getCorreta() {
-        return justificativaCorreta;
+        return this.justificativaCorreta;
     }
 }
+

@@ -1,3 +1,10 @@
+// =============================================
+// Classe QuestaoException
+// Exceção personalizada para erros relacionados a questões
+// Lançada quando há problemas na criação ou manipulação de questões
+// Permite tratamento específico de erros em questões
+// =============================================
+
 package Exceptions;
 
 public class QuestaoException extends Exception {
@@ -9,3 +16,4 @@ public class QuestaoException extends Exception {
         super(mensagem, causa);
     }
 }
+

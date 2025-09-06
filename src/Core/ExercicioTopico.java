@@ -8,33 +8,26 @@ package Core;
 import Exceptions.NavegacaoException;
 import Exceptions.QuestaoException;
 import Questoes.Questao;
+import Questoes.QuestaoCompletarCodigo;
 import Questoes.QuestaoFactory;
 
 import java.util.ArrayList;
-import java.util.Stack;
 
 public class ExercicioTopico implements Navegavel {
-    // Título do tópico estudado
     private String tituloTopico;
-    // Lista de questões do tópico
     private ArrayList<Questao> questoes;
-    // Índice da questão atual
     private int indiceAtual;
-    // Modo de ordenação das questões (embaralhadas, crescente, decrescente)
     private String modoOrdenacao;
-    // Estatísticas do usuário para registrar desempenho
     private Estatisticas estatisticasUsuario;
-    // Histórico de navegação para voltar questões
-    private Stack<Integer> historicoNavegacao;
+    private Pilha historicoNavegacao;
 
-    // Construtor: inicializa o tópico, estatísticas e variáveis de controle
     public ExercicioTopico(String titulo, Estatisticas estatisticas) {
         this.tituloTopico = titulo;
         this.questoes = new ArrayList<>();
         this.indiceAtual = 0;
         this.modoOrdenacao = "embaralhadas";
         this.estatisticasUsuario = estatisticas;
-        this.historicoNavegacao = new Stack<>();
+        this.historicoNavegacao = new Pilha();
     }
 
     // Carrega as questões do tópico usando a fábrica de questões
@@ -66,7 +59,7 @@ public class ExercicioTopico implements Navegavel {
             throw new NavegacaoException("Não há próxima questão disponível.");
         }
 
-        historicoNavegacao.push(indiceAtual);
+        historicoNavegacao.empilhar(indiceAtual);
         indiceAtual++;
     }
 
@@ -77,8 +70,8 @@ public class ExercicioTopico implements Navegavel {
             throw new NavegacaoException("Não há questão anterior disponível.");
         }
 
-        if (!historicoNavegacao.isEmpty()) {
-            indiceAtual = historicoNavegacao.pop();
+        if (!historicoNavegacao.estaVazia()) {
+            indiceAtual = historicoNavegacao.desempilhar();
         } else {
             indiceAtual--;
         }
@@ -89,7 +82,7 @@ public class ExercicioTopico implements Navegavel {
     public void irParaMenu() throws NavegacaoException {
         // Reset do exercício para voltar ao menu
         indiceAtual = 0;
-        historicoNavegacao.clear();
+        historicoNavegacao.limpar();
     }
 
     // Processa a resposta do usuário para a questão atual
@@ -104,6 +97,9 @@ public class ExercicioTopico implements Navegavel {
             } else {
                 estatisticasUsuario.registrarErro();
                 System.out.println("\n❌ INCORRETO!");
+                if (questaoAtual instanceof QuestaoCompletarCodigo) {
+                    System.out.println(((QuestaoCompletarCodigo) questaoAtual).getDica());
+                }
                 System.out.println("Resposta correta: " + questaoAtual.getCorreta());
                 System.out.println("Explicação: " + questaoAtual.getExplicacao());
             }
@@ -176,6 +172,4 @@ public class ExercicioTopico implements Navegavel {
 
     // Getters
     public String getTituloTopico() { return tituloTopico; }
-    public int getIndiceAtual() { return indiceAtual; }
-    public int getTotalQuestoes() { return questoes.size(); }
 }
